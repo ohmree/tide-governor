@@ -1,0 +1,11 @@
+[package]
+name = "tide-governor"
+version = "0.1.0"
+authors = ["OhmRee <13455401+ohmree@users.noreply.github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+governor = "0.3.1"
+tide = "0.15.0"
