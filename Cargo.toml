@@ -1,5 +1,9 @@
 [package]
 name = "tide-governor"
+description = "A rate-limiting middleware for tide"
+homepage = "https://github.com/ohmree/tide-governor"
+repository = "https://github.com/ohmree/tide-governor"
+documentation = "https://docs.rs/tide-governor"
 version = "1.0.0"
 authors = ["OhmRee <13455401+ohmree@users.noreply.github.com>"]
 edition = "2018"
