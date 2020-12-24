@@ -27,7 +27,14 @@ use governor::{
     Quota, RateLimiter,
 };
 use lazy_static::lazy_static;
-use std::{convert::TryInto, error::Error, net::{IpAddr, SocketAddr}, num::NonZeroU32, sync::Arc, time::Duration};
+use std::{
+    convert::TryInto,
+    error::Error,
+    net::{IpAddr, SocketAddr},
+    num::NonZeroU32,
+    sync::Arc,
+    time::Duration,
+};
 use tide::{
     http::StatusCode,
     log::{debug, trace},
@@ -58,9 +65,10 @@ impl GovernorMiddleware {
 
     /// Constructs a rate-limiting middleware that allows a specified number of requests every second.
     /// Returns an error if `times` can't be converted into a [`NonZeroU32`].
-    pub fn per_second<T>(times: T) -> Result<Self> where
+    pub fn per_second<T>(times: T) -> Result<Self>
+    where
         T: TryInto<NonZeroU32>,
-        T::Error: Error + Send + Sync + 'static
+        T::Error: Error + Send + Sync + 'static,
     {
         Ok(Self {
             limiter: Arc::new(RateLimiter::<IpAddr, _, _>::keyed(Quota::per_second(
@@ -71,9 +79,10 @@ impl GovernorMiddleware {
 
     /// Constructs a rate-limiting middleware that allows a specified number of requests every minute.
     /// Returns an error if `times` can't be converted into a [`NonZeroU32`].
-    pub fn per_minute<T>(times: T) -> Result<Self> where
+    pub fn per_minute<T>(times: T) -> Result<Self>
+    where
         T: TryInto<NonZeroU32>,
-        T::Error: Error + Send + Sync + 'static
+        T::Error: Error + Send + Sync + 'static,
     {
         Ok(Self {
             limiter: Arc::new(RateLimiter::<IpAddr, _, _>::keyed(Quota::per_minute(
@@ -84,9 +93,10 @@ impl GovernorMiddleware {
 
     /// Constructs a rate-limiting middleware that allows a specified number of requests every hour.
     /// Returns an error if `times` can't be converted into a [`NonZeroU32`].
-    pub fn per_hour<T>(times: T) -> Result<Self> where
+    pub fn per_hour<T>(times: T) -> Result<Self>
+    where
         T: TryInto<NonZeroU32>,
-        T::Error: Error + Send + Sync + 'static
+        T::Error: Error + Send + Sync + 'static,
     {
         Ok(Self {
             limiter: Arc::new(RateLimiter::<IpAddr, _, _>::keyed(Quota::per_hour(
