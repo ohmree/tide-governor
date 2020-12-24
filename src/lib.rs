@@ -50,6 +50,9 @@ lazy_static! {
     static ref CLOCK: DefaultClock = DefaultClock::default();
 }
 
+/// Once the rate limit has been reached, the middleware will respond with
+/// status code 429 (too many requests) and a `Retry-After` header with the amount
+/// of time that needs to pass before another request will be allowed.
 #[derive(Debug, Clone)]
 pub struct GovernorMiddleware {
     limiter: Arc<RateLimiter<IpAddr, DefaultKeyedStateStore<IpAddr>, DefaultClock>>,
