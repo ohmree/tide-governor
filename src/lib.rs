@@ -99,6 +99,7 @@ impl GovernorMiddleware {
     }
 
     /// Constructs a rate-limiting middleware that allows a specified number of requests every hour.
+    ///
     /// Returns an error if `times` can't be converted into a [`NonZeroU32`].
     pub fn per_hour<T>(times: T) -> Result<Self>
     where
