@@ -19,6 +19,9 @@
 //!     Ok(())
 //! }
 //! ```
+//! [tide]: https://github.com/http-rs/tide
+//! [governor]: https://github.com/antifuchs/governor
+
 // TODO: figure out how to add jitter support using `governor::Jitter`.
 // TODO: add usage examples (both in the docs and in an examples directory).
 // TODO: add unit tests.
@@ -54,6 +57,7 @@ pub struct GovernorMiddleware {
 
 impl GovernorMiddleware {
     /// Constructs a rate-limiting middleware from a [`Duration`] that allows one request in the given time interval.
+    ///
     /// If the time interval is zero, returns `None`.
     #[must_use]
     pub fn with_period(duration: Duration) -> Option<Self> {
@@ -65,6 +69,7 @@ impl GovernorMiddleware {
     }
 
     /// Constructs a rate-limiting middleware that allows a specified number of requests every second.
+    ///
     /// Returns an error if `times` can't be converted into a [`NonZeroU32`].
     pub fn per_second<T>(times: T) -> Result<Self>
     where
@@ -79,6 +84,7 @@ impl GovernorMiddleware {
     }
 
     /// Constructs a rate-limiting middleware that allows a specified number of requests every minute.
+    ///
     /// Returns an error if `times` can't be converted into a [`NonZeroU32`].
     pub fn per_minute<T>(times: T) -> Result<Self>
     where
