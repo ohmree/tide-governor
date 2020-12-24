@@ -2,6 +2,7 @@
 //! # Example
 //! ```rust
 //! use tide_governor::GovernorMiddleware;
+//! use std::env;
 //!
 //! #[async_std::main]
 //! async fn main() -> tide::Result<()> {
