@@ -1,5 +1,26 @@
 //! A [tide] middleware that implements rate-limiting using [governor].
+//! # Example
+//! ```rust
+//! use tide_governor::GovernorMiddleware;
+//!
+//! #[async_std::main]
+//! async fn main() -> tide::Result<()> {
+//!     let mut app = tide::new();
+//!     app.at("/")
+//!         .with(GovernorMiddleware::per_minute(4)?)
+//!         .get(|_| async move { todo!() });
+//!     app.at("/foo/:bar")
+//!         .with(GovernorMiddleware::per_hour(360)?)
+//!         .put(|_| async move { todo!() });
+//!
+//!     app.listen(format!("http://localhost:{}", env::var("PORT")?))
+//!         .await?;
+//!     Ok(())
+//! }
+//! ```
 // TODO: figure out how to add jitter support using `governor::Jitter`.
+// TODO: add usage examples (both in the docs and in an examples directory).
+// TODO: add unit tests.
 use governor::{
     clock::{Clock, DefaultClock},
     state::keyed::DefaultKeyedStateStore,
@@ -24,7 +45,7 @@ pub struct GovernorMiddleware {
 }
 
 impl GovernorMiddleware {
-    /// Construct a middleware from a [`Duration`] that limits requests to one in a time interval.
+    /// Constructs a rate-limiting middleware from a [`Duration`] that allows one request in the given time interval.
     /// If the time interval is zero, returns `None`.
     #[must_use]
     pub fn with_period(duration: Duration) -> Option<Self> {
@@ -35,35 +56,41 @@ impl GovernorMiddleware {
         })
     }
 
-    pub fn per_second<T>(seconds: T) -> Result<Self> where
+    /// Constructs a rate-limiting middleware that allows a specified number of requests every second.
+    /// Returns an error if `times` can't be converted into a [`NonZeroU32`].
+    pub fn per_second<T>(times: T) -> Result<Self> where
         T: TryInto<NonZeroU32>,
         T::Error: Error + Send + Sync + 'static
     {
         Ok(Self {
             limiter: Arc::new(RateLimiter::<IpAddr, _, _>::keyed(Quota::per_second(
-                seconds.try_into()?,
+                times.try_into()?,
             ))),
         })
     }
 
-    pub fn per_minute<T>(minutes: T) -> Result<Self> where
+    /// Constructs a rate-limiting middleware that allows a specified number of requests every minute.
+    /// Returns an error if `times` can't be converted into a [`NonZeroU32`].
+    pub fn per_minute<T>(times: T) -> Result<Self> where
         T: TryInto<NonZeroU32>,
         T::Error: Error + Send + Sync + 'static
     {
         Ok(Self {
             limiter: Arc::new(RateLimiter::<IpAddr, _, _>::keyed(Quota::per_minute(
-                minutes.try_into()?,
+                times.try_into()?,
             ))),
         })
     }
 
-    pub fn per_hour<T>(hours: T) -> Result<Self> where
+    /// Constructs a rate-limiting middleware that allows a specified number of requests every hour.
+    /// Returns an error if `times` can't be converted into a [`NonZeroU32`].
+    pub fn per_hour<T>(times: T) -> Result<Self> where
         T: TryInto<NonZeroU32>,
         T::Error: Error + Send + Sync + 'static
     {
         Ok(Self {
             limiter: Arc::new(RateLimiter::<IpAddr, _, _>::keyed(Quota::per_hour(
-                hours.try_into()?,
+                times.try_into()?,
             ))),
         })
     }
