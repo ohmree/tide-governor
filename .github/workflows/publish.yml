@@ -12,17 +12,28 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+
     - name: Get tag
       run: |
         echo "PUBLISH_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        echo "CRATE_VERSION=${PUBLISH_TAG#v}" >> $GITHUB_ENV
         echo "Publishing tag ${{ env.PUBLISH_TAG }}"
-    - uses: actions/checkout@v2
+
     - uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
         override: true
+
     # TODO: figure out if we need caching
     - uses: Swatinem/rust-cache@v1
-    - uses: katyo/publish-crates@v1
+
+    - name: Bump crate version
+      uses: thomaseizinger/set-crate-version@master
+      with:
+        version: ${{ env.CRATE_VERSION }}
+
+    - name: Publish crate
+      uses: katyo/publish-crates@v1
       with:
         registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
