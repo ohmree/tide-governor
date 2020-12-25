@@ -14,11 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Get tag
-      run: |
-        echo "PUBLISH_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-        echo "CRATE_VERSION=${PUBLISH_TAG#v}" >> $GITHUB_ENV
-        echo "Publishing tag ${{ env.PUBLISH_TAG }}"
+    - id: get_version
+      name: Get version
+      uses: battila7/get-version-action@v2
 
     - uses: actions-rs/toolchain@v1
       with:
@@ -31,7 +29,7 @@ jobs:
     - name: Bump crate version
       uses: thomaseizinger/set-crate-version@master
       with:
-        version: ${{ env.CRATE_VERSION }}
+        version: ${{ steps.get_version.outputs.version-without-v }}
 
     - name: Publish crate
       uses: katyo/publish-crates@v1
