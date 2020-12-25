@@ -1,4 +1,4 @@
-name: Rust
+name: Publish to crates.io
 
 on:
   push:
@@ -10,10 +10,9 @@ env:
 
 jobs:
   publish:
-    name: Publish to crates.io
     runs-on: ubuntu-latest
     steps:
-    - name: Get Tag
+    - name: Get tag
       run: |
         echo "PUBLISH_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
         echo "Publishing tag ${{ env.PUBLISH_TAG }}"
