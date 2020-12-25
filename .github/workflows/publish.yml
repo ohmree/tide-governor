@@ -33,9 +33,10 @@ jobs:
 
     - uses: stefanzweifel/git-auto-commit-action@v4
       name: Commit Cargo.toml version change
-      commit_message: Bumped crate version to ${{ steps.get_version.outputs.version-without-v }}
-      branch: main
-      file_pattern: Cargo.toml
+      with:
+        commit_message: Bumped crate version to ${{ steps.get_version.outputs.version-without-v }}
+        branch: main
+        file_pattern: Cargo.toml
 
     - name: Publish crate
       uses: katyo/publish-crates@v1
