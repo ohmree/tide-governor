@@ -120,17 +120,19 @@ impl GovernorMiddleware {
 #[async_trait]
 impl<State: Clone + Send + Sync + 'static> Middleware<State> for GovernorMiddleware {
     async fn handle(&self, req: Request<State>, next: Next<'_, State>) -> tide::Result {
-        let remote: SocketAddr = req
-            .remote()
-            .ok_or_else(|| {
-                tide::Error::from_str(
-                    StatusCode::InternalServerError,
-                    "failed to get request remote address",
-                )
-            })?
-            .parse()?;
+        let remote = req.remote().ok_or_else(|| {
+            tide::Error::from_str(
+                StatusCode::InternalServerError,
+                "failed to get request remote address",
+            )
+        })?;
+        let remote: IpAddr = match remote.parse::<SocketAddr>() {
+            Ok(r) => r.ip(),
+            Err(_) => remote.parse()?,
+        };
         trace!("remote: {}", remote);
-        match self.limiter.check_key(&remote.ip()) {
+
+        match self.limiter.check_key(&remote) {
             Ok(_) => {
                 debug!("allowing remote {}", remote);
                 Ok(next.run(req).await)
@@ -145,7 +147,7 @@ impl<State: Clone + Send + Sync + 'static> Middleware<State> for GovernorMiddlew
                     .build();
                 debug!(
                     "blocking address {} for {} seconds",
-                    remote.ip(),
+                    remote,
                     wait_time.as_secs()
                 );
                 Ok(res)
