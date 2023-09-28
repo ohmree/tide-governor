@@ -14,4 +14,4 @@ license = "MIT"
 [dependencies]
 governor = "0.6.0"
 lazy_static = "1.4.0"
-tide = "0.16.0"
+tide = { version = "0.16", default-features = false }
